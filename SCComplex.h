@@ -18,51 +18,18 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifndef _SC_Graph_
-#define _SC_Graph_
 
-#include "SC_Node.h"
-#include "SC_Rate.h"
-#include "SC_SndBuf.h"
+#ifndef _SCComplex_
+#define _SCComplex_
 
-/*
- changes to this struct likely also mean that a change is needed for
-    static const int sc_api_version = x;
- value in SC_InterfaceTable.h file.
- */
-struct Graph
-{
-	Node mNode;
+#include "SC_Complex.h"
 
-	uint32 mNumWires;
-	struct Wire *mWire;
+/** wrapper for backwards compatibility */
 
-	uint32 mNumControls;
-	float *mControls;
-	float **mMapControls;
-	int32 *mAudioBusOffsets;
+typedef Polar SCPolar;
+typedef Complex SCComplex;
 
-	// try this for setting the rate of a control
-	int *mControlRates;
-
-	uint32 mNumUnits;
-	struct Unit **mUnits;
-
-	uint32 mNumCalcUnits;
-	struct Unit **mCalcUnits; // excludes i-rate units.
-
-	int mSampleOffset;
-	struct RGen* mRGen;
-
-	struct Unit *mLocalAudioBusUnit;
-	struct Unit *mLocalControlBusUnit;
-
-	float mSubsampleOffset;
-
-	SndBuf *mLocalSndBufs;
-	int localBufNum;
-	int localMaxBufNum;
-};
-typedef struct Graph Graph;
+inline void init_SCComplex(InterfaceTable *inTable)
+{}
 
 #endif

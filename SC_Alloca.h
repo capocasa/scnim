@@ -1,6 +1,6 @@
 /*
 	SuperCollider real time audio synthesis system
-    Copyright (c) 2002 James McCartney. All rights reserved.
+    Copyright (c) 2011 Tim Blechmann. All rights reserved.
 	http://www.audiosynth.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,23 +18,20 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifndef _BufGen_
-#define _BufGen_
+#ifndef _SC_ALLOCA_H
+#define _SC_ALLOCA_H
 
-#include "SC_Types.h"
+#ifdef __linux__
+#include <alloca.h>
 
-typedef void (*BufGenFunc)(struct World *world, struct SndBuf *buf, struct sc_msg_iter *msg);
+#elif defined(_WIN32)
+#include <malloc.h>
 
-struct BufGen
-{
-	int32 mBufGenName[kSCNameLen];
-	int32 mHash;
-
-	BufGenFunc mBufGenFunc;
-};
-
-extern "C" {
-bool BufGen_Create(const char *inName, BufGenFunc inFunc);
-}
+#ifndef alloca
+#define alloca _alloca
+#endif
 
 #endif
+
+
+#endif /* _SC_ALLOCA_H */

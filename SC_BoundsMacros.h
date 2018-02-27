@@ -18,51 +18,21 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifndef _SC_Graph_
-#define _SC_Graph_
+#ifndef _SC_BoundsMacros_
+#define _SC_BoundsMacros_
 
-#include "SC_Node.h"
-#include "SC_Rate.h"
-#include "SC_SndBuf.h"
+#include <cstdlib>              /* std::abs */
+#include <cmath>                /* std::abs */
+#include <algorithm>
 
-/*
- changes to this struct likely also mean that a change is needed for
-    static const int sc_api_version = x;
- value in SC_InterfaceTable.h file.
- */
-struct Graph
+#define sc_abs(a) std::abs(a)
+#define sc_max(a,b) (((a) > (b)) ? (a) : (b))
+#define sc_min(a,b) (((a) < (b)) ? (a) : (b))
+
+template <typename T, typename U, typename V>
+inline T sc_clip(T x, U lo, V hi)
 {
-	Node mNode;
-
-	uint32 mNumWires;
-	struct Wire *mWire;
-
-	uint32 mNumControls;
-	float *mControls;
-	float **mMapControls;
-	int32 *mAudioBusOffsets;
-
-	// try this for setting the rate of a control
-	int *mControlRates;
-
-	uint32 mNumUnits;
-	struct Unit **mUnits;
-
-	uint32 mNumCalcUnits;
-	struct Unit **mCalcUnits; // excludes i-rate units.
-
-	int mSampleOffset;
-	struct RGen* mRGen;
-
-	struct Unit *mLocalAudioBusUnit;
-	struct Unit *mLocalControlBusUnit;
-
-	float mSubsampleOffset;
-
-	SndBuf *mLocalSndBufs;
-	int localBufNum;
-	int localMaxBufNum;
-};
-typedef struct Graph Graph;
+    return std::max(std::min(x, (T)hi), (T)lo);
+}
 
 #endif

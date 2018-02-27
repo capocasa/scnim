@@ -18,51 +18,42 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#ifndef _SC_Graph_
-#define _SC_Graph_
+#ifndef _FifoMsg_
+#define _FifoMsg_
 
-#include "SC_Node.h"
-#include "SC_Rate.h"
-#include "SC_SndBuf.h"
+typedef void (*FifoMsgFunc)(struct FifoMsg*);
 
-/*
- changes to this struct likely also mean that a change is needed for
-    static const int sc_api_version = x;
- value in SC_InterfaceTable.h file.
- */
-struct Graph
+struct FifoMsg
 {
-	Node mNode;
+	FifoMsg() : mPerformFunc(0), mFreeFunc(0), mData(0), mWorld(0) {}
 
-	uint32 mNumWires;
-	struct Wire *mWire;
+	void Set(struct World *inWorld, FifoMsgFunc inPerform, FifoMsgFunc inFree, void* inData);
+	void Perform();
+	void Free();
 
-	uint32 mNumControls;
-	float *mControls;
-	float **mMapControls;
-	int32 *mAudioBusOffsets;
-
-	// try this for setting the rate of a control
-	int *mControlRates;
-
-	uint32 mNumUnits;
-	struct Unit **mUnits;
-
-	uint32 mNumCalcUnits;
-	struct Unit **mCalcUnits; // excludes i-rate units.
-
-	int mSampleOffset;
-	struct RGen* mRGen;
-
-	struct Unit *mLocalAudioBusUnit;
-	struct Unit *mLocalControlBusUnit;
-
-	float mSubsampleOffset;
-
-	SndBuf *mLocalSndBufs;
-	int localBufNum;
-	int localMaxBufNum;
+	FifoMsgFunc mPerformFunc;
+	FifoMsgFunc mFreeFunc;
+	void* mData;
+	struct World *mWorld;
 };
-typedef struct Graph Graph;
+
+inline void FifoMsg::Set(World *inWorld, FifoMsgFunc inPerform, FifoMsgFunc inFree, void* inData)
+{
+	mWorld = inWorld;
+	mPerformFunc = inPerform;
+	mFreeFunc = inFree;
+	mData = inData;
+}
+
+inline void FifoMsg::Perform()
+{
+	if (mPerformFunc) (mPerformFunc)(this);
+}
+
+inline void FifoMsg::Free()
+{
+	if (mFreeFunc) (mFreeFunc)(this);
+}
 
 #endif
+

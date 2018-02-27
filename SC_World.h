@@ -27,13 +27,13 @@
 #include "SC_SndBuf.h"
 #include "SC_RGen.h"
 
-//-#ifdef SUPERNOVA
-//-namespace nova
-//-{
-//-class spin_lock;
-//-class padded_rw_spinlock;
-//-}
-//-#endif
+#ifdef SUPERNOVA
+namespace nova
+{
+class spin_lock;
+class padded_rw_spinlock;
+}
+#endif
 
 struct World
 {
@@ -102,10 +102,10 @@ struct World
 
 	const char* mRestrictedPath; // OSC commands to read/write data can only do it within this path, if specified
 
-//-#ifdef SUPERNOVA
-//-	nova::padded_rw_spinlock * mAudioBusLocks;
-//-	nova::spin_lock * mControlBusLock;
-//-#endif
+#ifdef SUPERNOVA
+	nova::padded_rw_spinlock * mAudioBusLocks;
+	nova::spin_lock * mControlBusLock;
+#endif
 };
 
 inline SndBuf* World_GetBuf(struct World *inWorld, uint32 index)

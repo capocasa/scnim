@@ -1,4 +1,53 @@
+/*
+	SuperCollider real time audio synthesis system
+    Copyright (c) 2002 James McCartney. All rights reserved.
+	http://www.audiosynth.com
 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+*/
+
+//----------------------------------------------------------------------------//
+// Ran088: L'Ecuyer's 1996 three-component Tausworthe generator "taus88"
+//----------------------------------------------------------------------------//
+//
+// Returns an integer random number uniformly distributed within [0,4294967295]
+//
+// The period length is approximately 2^88 (which is 3*10^26).
+// This generator is very fast and passes all standard statistical tests.
+//
+// Reference:
+//   (1) P. L'Ecuyer, Maximally equidistributed combined Tausworthe generators,
+//       Mathematics of Computation, 65, 203-213 (1996), see Figure 4.
+//   (2) recommended in:
+//       P. L'Ecuyer, Random number generation, chapter 4 of the
+//       Handbook on Simulation, Ed. Jerry Banks, Wiley, 1997.
+//
+//----------------------------------------------------------------------------//
+
+//----------------------------------------------------------------------------//
+// I chose this random number generator for the following reasons:
+//		fast.
+//		easier and faster to seed than other high quality rng's such as Mersenne Twister.
+//		the internal state is only 12 bytes.
+//		the period is long enough for music/audio.
+//		possible to code in altivec in future if needed.
+// - James McCartney
+//----------------------------------------------------------------------------//
+
+#ifndef _SC_RGen_
+#define _SC_RGen_
 
 #include "SC_Endian.h"
 #include "SC_Types.h"
@@ -36,9 +85,6 @@ struct RGen
 
 	uint32 s1, s2, s3;		// random generator state
 };
-
-
-/*
 
 inline void RGen::init(uint32 seed)
 {
@@ -259,6 +305,7 @@ inline float fcoin( uint32& s1, uint32& s2, uint32& s3 )
 	return u.f;
 }
 
-*/
 
+
+#endif
 

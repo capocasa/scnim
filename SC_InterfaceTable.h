@@ -1,3 +1,25 @@
+/*
+	SuperCollider real time audio synthesis system
+    Copyright (c) 2002 James McCartney. All rights reserved.
+	http://www.audiosynth.com
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+*/
+
+#ifndef _SC_SynthInterfaceTable_
+#define _SC_SynthInterfaceTable_
 
 static const int sc_api_version = 3;
 
@@ -23,14 +45,14 @@ struct ScopeBufferHnd
 	uint32 channels;
 	uint32 maxFrames;
 
-//-	float *channel_data( uint32 channel ) {
-//-		return data + (channel * maxFrames);
-//-	}
-//-
-//-	operator bool ()
-//-	{
-//-		return internalData != 0;
-//-	}
+	float *channel_data( uint32 channel ) {
+		return data + (channel * maxFrames);
+	}
+
+	operator bool ()
+	{
+		return internalData != 0;
+	}
 };
 
 struct InterfaceTable
@@ -85,8 +107,8 @@ struct InterfaceTable
 	void (*fSendNodeReply)(struct Node* inNode, int replyID, const char* cmdName, int numArgs, const float* values);
 
 	// sending messages between real time and non real time levels.
-	//-bool (*fSendMsgFromRT)(World *inWorld, struct FifoMsg& inMsg);
-	//-bool (*fSendMsgToRT)(World *inWorld, struct FifoMsg& inMsg);
+	bool (*fSendMsgFromRT)(World *inWorld, struct FifoMsg& inMsg);
+	bool (*fSendMsgToRT)(World *inWorld, struct FifoMsg& inMsg);
 
 	// libsndfile support
 	int (*fSndFileFormatInfoFromStrings)(SF_INFO *info,
@@ -125,19 +147,19 @@ struct InterfaceTable
 	// To initialise a specific FFT, ensure your input and output buffers exist. Internal data structures
 	// will be allocated using the alloc object,
 	// Both "fullsize" and "winsize" should be powers of two (this is not checked internally).
-	//-struct scfft * (*fSCfftCreate)(size_t fullsize, size_t winsize, SCFFT_WindowFunction wintype,
-	//-				 float *indata, float *outdata, SCFFT_Direction forward, SCFFT_Allocator & alloc);
+	struct scfft * (*fSCfftCreate)(size_t fullsize, size_t winsize, SCFFT_WindowFunction wintype,
+					 float *indata, float *outdata, SCFFT_Direction forward, SCFFT_Allocator & alloc);
 
 	void (*fSCfftDoFFT)(scfft *f);
 	void (*fSCfftDoIFFT)(scfft *f);
 
 	// destroy any resources held internally.
-	//-void (*fSCfftDestroy)(scfft *f, SCFFT_Allocator & alloc);
+	void (*fSCfftDestroy)(scfft *f, SCFFT_Allocator & alloc);
 
 	// Get scope buffer. Returns the maximum number of possile frames.
-	//-bool (*fGetScopeBuffer)(World *inWorld, int index, int channels, int maxFrames, ScopeBufferHnd &);
-	//-void (*fPushScopeBuffer)(World *inWorld, ScopeBufferHnd &, int frames);
-	//-void (*fReleaseScopeBuffer)(World *inWorld, ScopeBufferHnd &);
+	bool (*fGetScopeBuffer)(World *inWorld, int index, int channels, int maxFrames, ScopeBufferHnd &);
+	void (*fPushScopeBuffer)(World *inWorld, ScopeBufferHnd &, int frames);
+	void (*fReleaseScopeBuffer)(World *inWorld, ScopeBufferHnd &);
 };
 
 typedef struct InterfaceTable InterfaceTable;
@@ -179,17 +201,17 @@ typedef struct InterfaceTable InterfaceTable;
 
 #define DoAsynchronousCommand (*ft->fDoAsynchronousCommand)
 
-#def DefineSimpleUnit(name) \
+#define DefineSimpleUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, 0, 0);
 
-#def DefineDtorUnit(name) \
+#define DefineDtorUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
 	(UnitDtorFunc)&name##_Dtor, 0);
 
-#def DefineSimpleCantAliasUnit(name) \
+#define DefineSimpleCantAliasUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, 0, kUnitDef_CantAliasInputsToOutputs);
 
-#def DefineDtorCantAliasUnit(name) \
+#define DefineDtorCantAliasUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
 	(UnitDtorFunc)&name##_Dtor, kUnitDef_CantAliasInputsToOutputs);
 
@@ -199,18 +221,18 @@ typedef enum {
 } SC_ServerType;
 
 #ifdef STATIC_PLUGINS
-//-	#define PluginLoad(name) void name##_Load(InterfaceTable *inTable)
+	#define PluginLoad(name) void name##_Load(InterfaceTable *inTable)
 #else
 	#ifdef SUPERNOVA
-	//-#define SUPERNOVA_CHECK C_LINKAGE SC_API_EXPORT int server_type(void) { return sc_server_supernova; }
+	#define SUPERNOVA_CHECK C_LINKAGE SC_API_EXPORT int server_type(void) { return sc_server_supernova; }
 	#else
-	//-#define SUPERNOVA_CHECK C_LINKAGE SC_API_EXPORT int server_type(void) { return sc_server_scsynth; }
+	#define SUPERNOVA_CHECK C_LINKAGE SC_API_EXPORT int server_type(void) { return sc_server_scsynth; }
 	#endif
 
 	#define PluginLoad(name) 														\
-		//-C_LINKAGE SC_API_EXPORT int api_version(void) { return sc_api_version; }		\
-		//-SUPERNOVA_CHECK																\
-		//-C_LINKAGE SC_API_EXPORT void load(InterfaceTable *inTable)
+		C_LINKAGE SC_API_EXPORT int api_version(void) { return sc_api_version; }		\
+		SUPERNOVA_CHECK																\
+		C_LINKAGE SC_API_EXPORT void load(InterfaceTable *inTable)
 #endif
 
 #define scfft_create (*ft->fSCfftCreate)
@@ -219,25 +241,26 @@ typedef enum {
 #define scfft_destroy (*ft->fSCfftDestroy)
 
 
-//-class SCWorld_Allocator:
-//-	public SCFFT_Allocator
-//-{
-//-	InterfaceTable * ft;
-//-	World * world;
-//-
-//-public:
-//-	SCWorld_Allocator(InterfaceTable * ft, World * world):
-//-		ft(ft), world(world)
-//-	{}
-//-
-//-	virtual void* alloc(size_t size)
-//-	{
-//-		return RTAlloc(world, size);
-//-	}
-//-
-//-	virtual void free(void* ptr)
-//-	{
-//-		RTFree(world, ptr);
-//-	}
-//-};
-//-
+class SCWorld_Allocator:
+	public SCFFT_Allocator
+{
+	InterfaceTable * ft;
+	World * world;
+
+public:
+	SCWorld_Allocator(InterfaceTable * ft, World * world):
+		ft(ft), world(world)
+	{}
+
+	virtual void* alloc(size_t size)
+	{
+		return RTAlloc(world, size);
+	}
+
+	virtual void free(void* ptr)
+	{
+		RTFree(world, ptr);
+	}
+};
+
+#endif
