@@ -24,12 +24,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef C2NIM
+
 #if !defined(__cplusplus)
 # include <stdbool.h>
 #endif // __cplusplus
 
+#endif
+
 typedef int SCErr;
 
+#ifndef C2NIM
 typedef  int64_t  int64;
 typedef uint64_t uint64;
 
@@ -41,6 +46,7 @@ typedef uint16_t uint16;
 
 typedef  int8_t  int8;
 typedef uint8_t uint8;
+#endif;
 
 typedef float float32;
 typedef double float64;
@@ -60,6 +66,13 @@ typedef union {
 const unsigned int kSCNameLen = 8;
 const unsigned int kSCNameByteLen = 8 * sizeof(int32);
 
+#ifdef C2NIM
+#define sc_typeof_cast(x) x
+#endif
+
+
+#ifndef C2NIM
+
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
 #define sc_typeof_cast(x) (decltype(x))
 #elif defined(__GNUC__)
@@ -67,6 +80,7 @@ const unsigned int kSCNameByteLen = 8 * sizeof(int32);
 #else
 #define sc_typeof_cast(x) /* (typeof(x)) */
 #endif
+#endif 
 
 #endif
 

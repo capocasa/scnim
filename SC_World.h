@@ -19,8 +19,6 @@
 */
 
 
-#ifndef _SC_World_
-#define _SC_World_
 
 #include "SC_Types.h"
 #include "SC_Rate.h"
@@ -102,10 +100,13 @@ struct World
 
 	const char* mRestrictedPath; // OSC commands to read/write data can only do it within this path, if specified
 
+/*C2NIM
 #ifdef SUPERNOVA
 	nova::padded_rw_spinlock * mAudioBusLocks;
 	nova::spin_lock * mControlBusLock;
 #endif
+*/
+
 };
 
 inline SndBuf* World_GetBuf(struct World *inWorld, uint32 index)
@@ -122,4 +123,3 @@ inline SndBuf* World_GetNRTBuf(struct World *inWorld, uint32 index)
 
 typedef void (*LoadPlugInFunc)(struct InterfaceTable *);
 typedef void (*UnLoadPlugInFunc)();
-#endif

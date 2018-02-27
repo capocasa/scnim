@@ -28,14 +28,13 @@
 typedef struct SNDFILE_tag      SNDFILE ;
 
 
-
-#if (defined (_MSCVER) || defined (_MSC_VER))
-typedef __int64_t       sf_count_t ;
-#define SF_COUNT_MAX            0x7fffffffffffffffi64
-#else
-typedef off_t   sf_count_t ;
+//C2VIM #if (defined (_MSCVER) || defined (_MSC_VER))
+//C2VIM typedef __int64_t       sf_count_t ;
+//C2vim #define SF_COUNT_MAX            0x7fffffffffffffffi64
+//C2vim #else
+typedef int sf_count_t ;
 #define SF_COUNT_MAX            0x7FFFFFFFFFFFFFFFLL
-#endif
+//C2VIM#endif
 
 
 /* A pointer to a SF_INFO structure is passed to sf_open_read () and filled in.

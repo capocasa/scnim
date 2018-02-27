@@ -25,6 +25,8 @@
 
 typedef struct SNDFILE_tag SNDFILE;
 
+#ifndef C2NIM
+
 #ifdef SUPERNOVA
 
 #include <atomic>
@@ -41,11 +43,11 @@ class rw_spinlock
 	static const uint32_t locked_state   = 0x80000000;
 	static const uint32_t reader_mask    = 0x7fffffff;
 
-#ifdef __SSE2__
+//C2NIM #ifdef __SSE2__
 	static inline void pause() { _mm_pause(); }
-#else
-	static inline void pause() { }
-#endif
+//C2NIM #else
+//C2NIM	static inline void pause() { }
+//C2NIM #endif
 
 public:
 	struct unique_lock
@@ -69,10 +71,11 @@ public:
 	};
 
 	rw_spinlock()                                    = default;
-	rw_spinlock(rw_spinlock const & rhs)             = delete;
-	rw_spinlock & operator=(rw_spinlock const & rhs) = delete;
-	rw_spinlock(rw_spinlock && rhs)                  = delete;
-	rw_spinlock & operator=(rw_spinlock & rhs)       = delete;
+	
+//C2NIM  rw_spinlock(rw_spinlock const & rhs)             = delete;
+//C2NIM	rw_spinlock & operator=(rw_spinlock const & rhs) = delete;
+//C2NIM	rw_spinlock(rw_spinlock && rhs)                  = delete;
+//C2NIM	rw_spinlock & operator=(rw_spinlock & rhs)       = delete;
 
 	~rw_spinlock() { assert(state == unlocked_state); }
 
@@ -141,8 +144,11 @@ public:
 	}
 
 private:
-	std::atomic<uint32_t> state {unlocked_state};
+//C2NIM	std::atomic<uint32_t> state {unlocked_state};
+  std::atomic<uint32_t> state[1];
 };
+
+#endif
 
 #endif
 
@@ -159,10 +165,10 @@ struct SndBuf
 	int coord;	// used by fft ugens
 	SNDFILE *sndfile; // used by disk i/o
 	// SF_INFO fileinfo; // used by disk i/o
-#ifdef SUPERNOVA
-	bool isLocal;
-	mutable rw_spinlock lock;
-#endif
+//C2NIM #ifdef SUPERNOVA
+//C2NIM	bool isLocal;
+//C2NIM	mutable rw_spinlock lock;
+//C2NIM #endif
 };
 
 typedef struct SndBuf SndBuf;
