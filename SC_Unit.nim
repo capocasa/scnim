@@ -1,12 +1,18 @@
-import
-  SC_World
 
 type
+  
+  UnitDef* = object
+  
   UnitCtorFunc* = proc (inUnit: ptr Unit)
   UnitDtorFunc* = proc (inUnit: ptr Unit)
   UnitCalcFunc* = proc (inThing: ptr Unit; inNumSamples: cint)
   SC_Unit_Extensions* {.bycopy.} = object
     todo*: ptr cfloat
+
+  World* = object
+  Graph* = object
+  Wire* = object
+  Rate* = object
 
   Unit* {.bycopy.} = object
     mWorld*: ptr World

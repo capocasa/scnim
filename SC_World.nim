@@ -1,8 +1,19 @@
+
 import
-  SC_InterfaceTable
+  SC_Types, SC_Rate, SC_SndBuf, SC_RGen
+
+## -#ifdef SUPERNOVA
+## -namespace nova
+## -{
+## -class spin_lock;
+## -class padded_rw_spinlock;
+## -}
+## -#endif
 
 type
-  HiddenWorld* = object 
+  InterfaceTable* = object
+  Group = object
+  HiddenWorld* = object
   World* {.bycopy.} = object
     hw*: ptr HiddenWorld        ##  a pointer to private implementation, not available to plug-ins.
     ##  a pointer to the table of function pointers that implement the plug-ins'
@@ -46,17 +57,22 @@ type
     mErrorNotification*: cint
     mLocalErrorNotification*: cint
     mRendezvous*: bool         ##  Allow user to disable Rendezvous
-    mRestrictedPath*: cstring  ##  OSC commands to read/write data can only do it within this path, if specified
+    mRestrictedPath*: cstring ##  OSC commands to read/write data can only do it within this path, if specified
+                            ## -#ifdef SUPERNOVA
+                            ## -	nova::padded_rw_spinlock * mAudioBusLocks;
+                            ## -	nova::spin_lock * mControlBusLock;
+                            ## -#endif
   
 
 proc World_GetBuf*(inWorld: ptr World; index: uint32): ptr SndBuf {.inline.} =
-  if index > inWorld.mNumSndBufs: index = 0
-  return inWorld.mSndBufs + index
+  var offset = if index > inWorld.mNumSndBufs: 0'u32 else: index
+  return cast[ptr SndBuf](cast[uint32](inWorld.mSndBufs) + offset)
 
 proc World_GetNRTBuf*(inWorld: ptr World; index: uint32): ptr SndBuf {.inline.} =
-  if index > inWorld.mNumSndBufs: index = 0
-  return inWorld.mSndBufsNonRealTimeMirror + index
+  var offset = if index > inWorld.mNumSndBufs: 0'u32 else: index
+  return cast[ptr SndBuf](cast[uint32](inWorld.mSndBufsNonRealTimeMirror) + offset)
 
 type
   LoadPlugInFunc* = proc (a2: ptr InterfaceTable)
   UnLoadPlugInFunc* = proc ()
+

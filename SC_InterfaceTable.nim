@@ -1,32 +1,33 @@
+var sc_api_version*: cint = 3
 
-import SC_Unit
-
-var sc_api_version*: cint = 2
-
+import
+  SC_Types, SC_SndBuf, SC_Unit, SC_BufGen, SC_FifoMsg, SC_fftlib, SC_Export
 
 type
   World* {.bycopy.} = object
   
-type
   AsyncStageFn* = proc (inWorld: ptr World; cmdData: pointer): bool
   AsyncFreeFn* = proc (inWorld: ptr World; cmdData: pointer)
-type
   ScopeBufferHnd* {.bycopy.} = object
     internalData*: pointer
     data*: ptr cfloat
     channels*: uint32
-    maxFrames*: uint32
-    channel_data*: proc (channel: uint32): ptr cfloat
-#    bool*: proc (): operator
-
-type
+    maxFrames*: uint32         ## -	float *channel_data( uint32 channel ) {
+                     ## -		return data + (channel * maxFrames);
+                     ## -	}
+                     ## -
+                     ## -	operator bool ()
+                     ## -	{
+                     ## -		return internalData != 0;
+                     ## -	}
+  
   InterfaceTable* {.bycopy.} = object
     mSineSize*: cuint
     mSineWavetable*: ptr float32
     mSine*: ptr float32
-    mCosecant*: ptr float32   ##  call printf for debugging. should not use in finished code.
+    mCosecant*: ptr float32     ##  call printf for debugging. should not use in finished code.
     fPrint*: proc (fmt: cstring): cint {.varargs.} ##  get a seed for a random number generator
-    fRanSeed*: proc (): int32  ##  define a unit def
+    fRanSeed*: proc (): int32    ##  define a unit def
     fDefineUnit*: proc (inUnitClassName: cstring; inAllocSize: csize;
                       inCtor: UnitCtorFunc; inDtor: UnitDtorFunc; inFlags: uint32): bool ##  define a command  /cmd
     fDefinePlugInCmd*: proc (inCmdName: cstring; inFunc: PlugInCmdFunc;
@@ -46,10 +47,12 @@ type
     fSendTrigger*: proc (inNode: ptr Node; triggerID: cint; value: cfloat) ##  send a reply message from a Node to clients
     fSendNodeReply*: proc (inNode: ptr Node; replyID: cint; cmdName: cstring;
                          numArgs: cint; values: ptr cfloat) ##  sending messages between real time and non real time levels.
-    fSendMsgFromRT*: proc (inWorld: ptr World; inMsg: FifoMsg): bool
-    fSendMsgToRT*: proc (inWorld: ptr World; inMsg: FifoMsg): bool ##  libsndfile support
+                                                       ## -bool (*fSendMsgFromRT)(World *inWorld, struct FifoMsg& inMsg);
+                                                       ## -bool (*fSendMsgToRT)(World *inWorld, struct FifoMsg& inMsg);
+                                                       ##  libsndfile support
     fSndFileFormatInfoFromStrings*: proc (info: ptr SF_INFO;
-        headerFormatString: cstring; sampleFormatString: cstring): cint ##  get nodes by id
+                                        headerFormatString: cstring;
+                                        sampleFormatString: cstring): cint ##  get nodes by id
     fGetNode*: proc (inWorld: ptr World; inID: cint): ptr Node
     fGetGraph*: proc (inWorld: ptr World; inID: cint): ptr Graph
     fNRTLock*: proc (inWorld: ptr World)
@@ -70,18 +73,90 @@ type
                     inSampleRate: cdouble): cint ##  To initialise a specific FFT, ensure your input and output buffers exist. Internal data structures
                                               ##  will be allocated using the alloc object,
                                               ##  Both "fullsize" and "winsize" should be powers of two (this is not checked internally).
-    fSCfftCreate*: proc (fullsize: csize; winsize: csize;
-                       wintype: SCFFT_WindowFunction; indata: ptr cfloat;
-                       outdata: ptr cfloat; forward: SCFFT_Direction;
-                       alloc: SCFFT_Allocator): ptr scfft
+                                              ## -struct scfft * (*fSCfftCreate)(size_t fullsize, size_t winsize, SCFFT_WindowFunction wintype,
+                                              ## -				 float *indata, float *outdata, SCFFT_Direction forward, SCFFT_Allocator & alloc);
     fSCfftDoFFT*: proc (f: ptr scfft)
     fSCfftDoIFFT*: proc (f: ptr scfft) ##  destroy any resources held internally.
-    fSCfftDestroy*: proc (f: ptr scfft; alloc: SCFFT_Allocator) ##  Get scope buffer. Returns the maximum number of possile frames.
-    fGetScopeBuffer*: proc (inWorld: ptr World; index: cint; channels: cint;
-                          maxFrames: cint; a6: ScopeBufferHnd): bool
-    fPushScopeBuffer*: proc (inWorld: ptr World; a3: ScopeBufferHnd; frames: cint)
-    fReleaseScopeBuffer*: proc (inWorld: ptr World; a3: ScopeBufferHnd)
+                                  ## -void (*fSCfftDestroy)(scfft *f, SCFFT_Allocator & alloc);
+                                  ##  Get scope buffer. Returns the maximum number of possile frames.
+                                  ## -bool (*fGetScopeBuffer)(World *inWorld, int index, int channels, int maxFrames, ScopeBufferHnd &);
+                                  ## -void (*fPushScopeBuffer)(World *inWorld, ScopeBufferHnd &, int frames);
+                                  ## -void (*fReleaseScopeBuffer)(World *inWorld, ScopeBufferHnd &);
+  
+
+const
+  Print* = (ft.fPrint[])
+  RanSeed* = (ft.fRanSeed[])
+  NodeEnd* = (ft.fNodeEnd[])
+  NodeRun* = (ft.fNodeRun[])
+  DefineUnit* = (ft.fDefineUnit[])
+  DefinePlugInCmd* = (ft.fDefinePlugInCmd[])
+  DefineUnitCmd* = (ft.fDefineUnitCmd[])
+  DefineBufGen* = (ft.fDefineBufGen[])
+  ClearUnitOutputs* = (ft.fClearUnitOutputs[])
+  SendTrigger* = (ft.fSendTrigger[])
+  SendNodeReply* = (ft.fSendNodeReply[])
+  SendMsgFromRT* = (ft.fSendMsgFromRT[])
+  SendMsgToRT* = (ft.fSendMsgToRT[])
+  DoneAction* = (ft.fDoneAction[])
+  NRTAlloc* = (ft.fNRTAlloc[])
+  NRTRealloc* = (ft.fNRTRealloc[])
+  NRTFree* = (ft.fNRTFree[])
+  RTAlloc* = (ft.fRTAlloc[])
+  RTRealloc* = (ft.fRTRealloc[])
+  RTFree* = (ft.fRTFree[])
+  SC_GetNode* = (ft.fGetNode[])
+  SC_GetGraph* = (ft.fGetGraph[])
+  NRTLock* = (ft.fNRTLock[])
+  NRTUnlock* = (ft.fNRTUnlock[])
+  BufAlloc* = (ft.fBufAlloc[])
+  GroupDeleteAll* = (ft.fGroup_DeleteAll[])
+  SndFileFormatInfoFromStrings* = (ft.fSndFileFormatInfoFromStrings[])
+  DoAsynchronousCommand* = (ft.fDoAsynchronousCommand[])
 
 type
   SC_ServerType* = enum
     sc_server_scsynth = 0, sc_server_supernova = 1
+
+
+when defined(STATIC_PLUGINS):
+  ## -	#define PluginLoad(name) void name##_Load(InterfaceTable *inTable)
+else:
+  when defined(SUPERNOVA):
+    ## -#define SUPERNOVA_CHECK C_LINKAGE SC_API_EXPORT int server_type(void) { return sc_server_supernova; }
+  else:
+    ## -#define SUPERNOVA_CHECK C_LINKAGE SC_API_EXPORT int server_type(void) { return sc_server_scsynth; }
+  template PluginLoad*(name: untyped): void =
+    ## -C_LINKAGE SC_API_EXPORT int api_version(void) { return sc_api_version; }		\
+    ## -SUPERNOVA_CHECK																\
+    ## -C_LINKAGE SC_API_EXPORT void load(InterfaceTable *inTable)
+    nil
+
+const
+  scfft_create* = (ft.fSCfftCreate[])
+  scfft_dofft* = (ft.fSCfftDoFFT[])
+  scfft_doifft* = (ft.fSCfftDoIFFT[])
+  scfft_destroy* = (ft.fSCfftDestroy[])
+
+## -class SCWorld_Allocator:
+## -	public SCFFT_Allocator
+## -{
+## -	InterfaceTable * ft;
+## -	World * world;
+## -
+## -public:
+## -	SCWorld_Allocator(InterfaceTable * ft, World * world):
+## -		ft(ft), world(world)
+## -	{}
+## -
+## -	virtual void* alloc(size_t size)
+## -	{
+## -		return RTAlloc(world, size);
+## -	}
+## -
+## -	virtual void free(void* ptr)
+## -	{
+## -		RTFree(world, ptr);
+## -	}
+## -};
+## -
