@@ -7,6 +7,9 @@ when defined(SUPERNOVA):
   discard "forward decl of spin_lock"
   discard "forward decl of padded_rw_spinlock"
 type
+  Group* = object
+  InterfaceTable* = object
+  HiddenWorld* = object
   World* {.bycopy.} = object
     mSampleRate*: cdouble
     mBufLength*: cint

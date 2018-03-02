@@ -113,7 +113,15 @@ inline uint32 trand( uint32& s1, uint32& s2, uint32& s3 )
 inline uint32 RGen::trand()
 {
 	// generate a random 32 bit number
-	return ::trand(s1, s2, s3);
+	
+  
+//C2NIM return ::trand(s1, s2, s3);
+
+//C2NIM
+	s1 = ((s1 &  (uint32)-2) << 12) ^ (((s1 << 13) ^  s1) >> 19);
+	s2 = ((s2 &  (uint32)-8) <<  4) ^ (((s2 <<  2) ^  s2) >> 25);
+	s3 = ((s3 & (uint32)-16) << 17) ^ (((s3 <<  3) ^  s3) >> 11);
+	return s1 ^ s2 ^ s3;
 }
 
 inline double RGen::drand()
