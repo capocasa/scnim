@@ -26,6 +26,8 @@
 #include "SC_Types.h"
 #include <string.h>
 
+#[
+
 // return the ptr to the byte after the OSC string.
 inline const char* OSCstrskip(const char *str)
 {
@@ -66,6 +68,8 @@ inline float64 OSCdouble(const char* inData)
 	return slot.f;
 }
 
+]#
+
 struct sc_msg_iter
 {
 	const char *data, *rdpos, *endpos, *tags;
@@ -88,6 +92,7 @@ struct sc_msg_iter
     char nextTag(char defaultTag = 'f') { return tags ? tags[count] : defaultTag; }
 };
 
+/*C2NIM
 inline sc_msg_iter::sc_msg_iter()
 {
 }
@@ -121,9 +126,6 @@ inline int64 sc_msg_iter::gett(int64 defaultValue)
 			value = OSCtime(rdpos);
 			rdpos += sizeof(int64);
 		} else {
-			/* this is dangerous, as rdpos is not
-			   advanced accordingly while count++ takes
-				 place */
 			value = defaultValue;
 		}
 	} else {
@@ -146,16 +148,12 @@ inline int32 sc_msg_iter::geti(int32 defaultValue)
 			value = (int32)OSCfloat(rdpos);
 			rdpos += sizeof(float32);
 		} else if (tags[count] == 's') {
-			/*	value = atoi(rdpos); */
 			value = defaultValue;
 			rdpos = OSCstrskip(rdpos);
 		} else if (tags[count] == 'b') {
 			value = defaultValue;
 			skipb();
 		} else {
-			/* this is dangerous, as rdpos is not
-			   advanced accordingly while count++ takes
-			   place */
 			value = defaultValue;
 		}
 	} else {
@@ -181,16 +179,12 @@ inline float32 sc_msg_iter::getf(float32 defaultValue)
 			value = static_cast<float32>(OSCint(rdpos));
 			rdpos += sizeof(int32);
 		} else if (tags[count] == 's') {
-			/*    value = atof(rdpos); */
 			value = defaultValue;
 			rdpos = OSCstrskip(rdpos);
 		} else if (tags[count] == 'b') {
 			value = defaultValue;
 			skipb();
 		} else {
-			/* this is dangerous, as rdpos is not
-			   advanced accordingly while count++ takes
-			   place */
 			value = defaultValue;
 		}
 	} else {
@@ -216,16 +210,12 @@ inline float64 sc_msg_iter::getd(float64 defaultValue)
 			value = (float64)OSCint(rdpos);
 			rdpos += sizeof(int32);
 		} else if (tags[count] == 's') {
-			/*    value = atof(rdpos); */
 			value = defaultValue;
 			rdpos = OSCstrskip(rdpos);
 		} else if (tags[count] == 'b') {
 			value = defaultValue;
 			skipb();
 		} else {
-			/* this is dangerous, as rdpos is not
-			   advanced accordingly while count++ takes
-			   place */
 			value = defaultValue;
 		}
 	} else {
@@ -318,5 +308,5 @@ inline void sc_msg_iter::skipb()
 	rdpos += len4;
 	count ++;
 }
-
+*/
 #endif

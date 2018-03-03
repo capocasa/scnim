@@ -55,8 +55,17 @@ var ft*: ptr InterfaceTable
 
 var mTopGroup*: ptr Group
 
-proc World_GetBuf*(inWorld: ptr World; index: uint32): ptr SndBuf
-proc World_GetNRTBuf*(inWorld: ptr World; index: uint32): ptr SndBuf
+proc World_GetBuf*(inWorld: ptr World; index: uint32): ptr SndBuf {.inline.} =
+  let b = cast[uint32](inWorld.mNumSndBufs)
+  let i = if index > b: 0'u32 else: index
+  return cast[ptr SndBuf](b + i)
+
+proc World_GetNRTBuf*(inWorld: ptr World; index: uint32): ptr SndBuf {.inline.} =
+  let b = cast[uint32](inWorld.mNumSndBufs)
+  let i = if index > b: 0'u32 else: index
+  let c = cast[uint32](inWorld.mSndBufsNonRealTimeMirror)
+  return cast[ptr SndBuf](c + i)
+
 type
   LoadPlugInFunc* = proc (a2: ptr InterfaceTable)
   UnLoadPlugInFunc* = proc ()

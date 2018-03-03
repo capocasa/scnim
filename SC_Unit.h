@@ -84,7 +84,7 @@ enum {
 #define SETCALC(func) (unit->mCalcFunc = (UnitCalcFunc)&func)
 
 // calculate a slope for control rate interpolation to audio rate.
-#define CALCSLOPE(next,prev) ((next - prev) * sc_typeof_cast(next)unit->mRate->mSlopeFactor)
+# #define CALCSLOPE(next,prev) ((next - prev) * sc_typeof_cast(next)unit->mRate->mSlopeFactor)
 
 // get useful values
 #define SAMPLERATE (unit->mRate->mSampleRate)
@@ -205,13 +205,13 @@ struct buffer_lock
 #define RELEASE_BUS_AUDIO(index) unit->mWorld->mAudioBusLocks[index].unlock()
 #define RELEASE_BUS_AUDIO_SHARED(index) unit->mWorld->mAudioBusLocks[index].unlock_shared()
 
-#define LOCK_SNDBUF(buf) buffer_lock<false> lock_##buf(buf)
-#define LOCK_SNDBUF_SHARED(buf) buffer_lock<true> lock_##buf(buf);
+#C2NIM #define LOCK_SNDBUF(buf) buffer_lock<false> lock_##buf(buf)
+#C2NIM #define LOCK_SNDBUF_SHARED(buf) buffer_lock<true> lock_##buf(buf);
 
-#define LOCK_SNDBUF2(buf1, buf2) buffer_lock2<false, false> lock_##buf1##_##buf2(buf1, buf2);
-#define LOCK_SNDBUF2_SHARED(buf1, buf2) buffer_lock2<true, true> lock_##buf1##_##buf2(buf1, buf2);
-#define LOCK_SNDBUF2_EXCLUSIVE_SHARED(buf1, buf2) buffer_lock2<false, true> lock_##buf1##_##buf2(buf1, buf2);
-#define LOCK_SNDBUF2_SHARED_EXCLUSIVE(buf1, buf2) buffer_lock2<true, false> lock_##buf1##_##buf2(buf1, buf2);
+#C2NIM #define LOCK_SNDBUF2(buf1, buf2) buffer_lock2<false, false> lock_##buf1##_##buf2(buf1, buf2);
+#C2NIM #define LOCK_SNDBUF2_SHARED(buf1, buf2) buffer_lock2<true, true> lock_##buf1##_##buf2(buf1, buf2);
+#C2NIM #define LOCK_SNDBUF2_EXCLUSIVE_SHARED(buf1, buf2) buffer_lock2<false, true> lock_##buf1##_##buf2(buf1, buf2);
+#C2NIM #define LOCK_SNDBUF2_SHARED_EXCLUSIVE(buf1, buf2) buffer_lock2<true, false> lock_##buf1##_##buf2(buf1, buf2);
 
 #define ACQUIRE_SNDBUF(buf)        do { if (!buf->isLocal) buf->lock.lock();          } while (false)
 #define ACQUIRE_SNDBUF_SHARED(buf) do { if (!buf->isLocal) buf->lock.lock_shared();   } while (false)
@@ -247,6 +247,10 @@ struct buffer_lock
 
 #endif
 
+/*
+
+C2NIM
+
 // macros to grab a Buffer reference from the buffer indicated by the UGen's FIRST input
 #define GET_BUF \
 	float fbufnum  = ZIN0(0); \
@@ -270,6 +274,7 @@ struct buffer_lock
 	} \
 	SndBuf *buf = unit->m_buf; \
 	LOCK_SNDBUF(buf); \
+	float *bufData __attribute__((__unused__)) = buf->data; \
 	float *bufData __attribute__((__unused__)) = buf->data; \
 	uint32 bufChannels __attribute__((__unused__)) = buf->channels; \
 	uint32 bufSamples __attribute__((__unused__)) = buf->samples; \
@@ -346,6 +351,7 @@ struct buffer_lock
 	rgen.s1 = s1; \
 	rgen.s2 = s2; \
 	rgen.s3 = s3;
+C2NIM */
 
 typedef void (*UnitCmdFunc)(struct Unit *unit, struct sc_msg_iter *args);
 typedef void (*PlugInCmdFunc)(World *inWorld, void* inUserData, struct sc_msg_iter *args, void *replyAddr);
