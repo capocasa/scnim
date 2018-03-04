@@ -33,8 +33,8 @@ struct BufGen
 	BufGenFunc mBufGenFunc;
 };
 
-extern "C" {
-bool BufGen_Create(const char *inName, BufGenFunc inFunc);
-}
+//C2NIM extern "C" {
+//C2NIM bool BufGen_Create(const char *inName, BufGenFunc inFunc);
+//C2NIM }
 
 #endif

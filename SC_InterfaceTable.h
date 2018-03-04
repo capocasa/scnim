@@ -38,6 +38,7 @@ struct World;
 typedef bool (*AsyncStageFn)(World *inWorld, void* cmdData);
 typedef void (*AsyncFreeFn)(World *inWorld, void* cmdData);
 
+/*C2NIM
 struct ScopeBufferHnd
 {
 	void *internalData;
@@ -54,6 +55,7 @@ struct ScopeBufferHnd
 		return internalData != 0;
 	}
 };
+*/
 
 struct InterfaceTable
 {
@@ -107,8 +109,8 @@ struct InterfaceTable
 	void (*fSendNodeReply)(struct Node* inNode, int replyID, const char* cmdName, int numArgs, const float* values);
 
 	// sending messages between real time and non real time levels.
-	bool (*fSendMsgFromRT)(World *inWorld, struct FifoMsg& inMsg);
-	bool (*fSendMsgToRT)(World *inWorld, struct FifoMsg& inMsg);
+	bool (*fSendMsgFromRT)(World *inWorld, struct FifoMsg inMsg);
+	bool (*fSendMsgToRT)(World *inWorld, struct FifoMsg inMsg);
 
 	// libsndfile support
 	int (*fSndFileFormatInfoFromStrings)(SF_INFO *info,
@@ -148,18 +150,18 @@ struct InterfaceTable
 	// will be allocated using the alloc object,
 	// Both "fullsize" and "winsize" should be powers of two (this is not checked internally).
 	struct scfft * (*fSCfftCreate)(size_t fullsize, size_t winsize, SCFFT_WindowFunction wintype,
-					 float *indata, float *outdata, SCFFT_Direction forward, SCFFT_Allocator & alloc);
+					 float *indata, float *outdata, SCFFT_Direction forward, SCFFT_Allocator alloc);
 
 	void (*fSCfftDoFFT)(scfft *f);
 	void (*fSCfftDoIFFT)(scfft *f);
 
 	// destroy any resources held internally.
-	void (*fSCfftDestroy)(scfft *f, SCFFT_Allocator & alloc);
+	void (*fSCfftDestroy)(scfft *f, SCFFT_Allocator alloc);
 
 	// Get scope buffer. Returns the maximum number of possile frames.
-	bool (*fGetScopeBuffer)(World *inWorld, int index, int channels, int maxFrames, ScopeBufferHnd &);
-	void (*fPushScopeBuffer)(World *inWorld, ScopeBufferHnd &, int frames);
-	void (*fReleaseScopeBuffer)(World *inWorld, ScopeBufferHnd &);
+	bool (*fGetScopeBuffer)(World *inWorld, int index, int channels, int maxFrames, ScopeBufferHnd );
+	void (*fPushScopeBuffer)(World *inWorld, ScopeBufferHnd , int frames);
+	void (*fReleaseScopeBuffer)(World *inWorld, ScopeBufferHnd );
 };
 
 typedef struct InterfaceTable InterfaceTable;
@@ -201,6 +203,8 @@ typedef struct InterfaceTable InterfaceTable;
 
 #define DoAsynchronousCommand (*ft->fDoAsynchronousCommand)
 
+/*C2NIM
+
 #define DefineSimpleUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, 0, 0);
 
@@ -214,12 +218,14 @@ typedef struct InterfaceTable InterfaceTable;
 #define DefineDtorCantAliasUnit(name) \
 	(*ft->fDefineUnit)(#name, sizeof(name), (UnitCtorFunc)&name##_Ctor, \
 	(UnitDtorFunc)&name##_Dtor, kUnitDef_CantAliasInputsToOutputs);
+*/
 
 typedef enum {
     sc_server_scsynth = 0,
     sc_server_supernova = 1
 } SC_ServerType;
 
+/*C2NIM
 #ifdef STATIC_PLUGINS
 	#define PluginLoad(name) void name##_Load(InterfaceTable *inTable)
 #else
@@ -234,15 +240,15 @@ typedef enum {
 		SUPERNOVA_CHECK																\
 		C_LINKAGE SC_API_EXPORT void load(InterfaceTable *inTable)
 #endif
+*/
 
 #define scfft_create (*ft->fSCfftCreate)
 #define scfft_dofft (*ft->fSCfftDoFFT)
 #define scfft_doifft (*ft->fSCfftDoIFFT)
 #define scfft_destroy (*ft->fSCfftDestroy)
 
-
-class SCWorld_Allocator:
-	public SCFFT_Allocator
+/*C2NIM
+class SCWorld_Allocator: public SCFFT_Allocator
 {
 	InterfaceTable * ft;
 	World * world;
@@ -262,5 +268,6 @@ public:
 		RTFree(world, ptr);
 	}
 };
+*/
 
 #endif

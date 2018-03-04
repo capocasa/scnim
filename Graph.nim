@@ -1,7 +1,7 @@
 
 
 import
-  Node, Rate, SndBuf, Wire, Unit
+  Node, Rate, SndBuf, Wire, Unit, RGen
 
 
 type
@@ -22,7 +22,7 @@ type
     localMaxBufNum*: cint
 
 
-var mWire*: ptr Wire.Wire
+var mWire*: ptr Unit.Wire
 
 var mUnits*: ptr ptr Unit
 

@@ -21,17 +21,6 @@
 #ifndef _SC_ALLOCA_H
 #define _SC_ALLOCA_H
 
-#ifdef __linux__
-#include <alloca.h>
-
-#elif defined(_WIN32)
-#include <malloc.h>
-
-#ifndef alloca
-#define alloca _alloca
-#endif
-
-#endif
 
 
 #endif /* _SC_ALLOCA_H */

@@ -21,6 +21,8 @@
 #ifndef _SC_DemandUnit_
 #define _SC_DemandUnit_
 
+/*C2Nim
+
 #include "SC_Unit.h"
 #include "SC_Wire.h"
 
@@ -69,5 +71,7 @@ inline void ResetInput(Unit* unit, int index)
 #define DEMANDINPUT(index) DemandInput(unit, (index))
 #define DEMANDINPUT_A(index, offset) DemandInputA(unit, (index), (offset))
 #define RESETINPUT(index) ResetInput(unit, (index))
+
+*/
 
 #endif
