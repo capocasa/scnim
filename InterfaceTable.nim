@@ -1,12 +1,13 @@
 
 
-var sc_api_version*: cint = 3
+var sc_api_version: cint = 3
+
+export sc_api_version
 
 import
   Types, SndBuf, Unit, BufGen, FifoMsg, fftlib, Export, Node, sndfile_stub, World 
 
 type
-  #World* {.bycopy.} = object
   scfft = object
   
   AsyncStageFn* = proc (inWorld: ptr World; cmdData: pointer): bool
