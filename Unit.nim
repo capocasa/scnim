@@ -1,15 +1,18 @@
 
 
 import
-  Types, SndBuf, World, Rate, msg_iter
+  Types, SndBuf
 
 type
-  Graph* = object
+  msg_iter = object
+  World = object
   UnitDef* = object
+  Graph* = object
   Wire* = object
-  UnitCtorFunc* = proc (inUnit: ptr Unit)
-  UnitDtorFunc* = proc (inUnit: ptr Unit)
-  UnitCalcFunc* = proc (inThing: ptr Unit; inNumSamples: cint)
+  Rate* = object
+  UnitCtorFunc* = proc () {.cdecl.}
+  UnitDtorFunc* = proc (inUnit: ptr Unit) {.cdecl.}
+  UnitCalcFunc* = proc (inThing: ptr Unit; inNumSamples: cint) {.cdecl}
   Unit_Extensions* {.bycopy.} = object
     todo*: ptr cfloat
 
@@ -236,4 +239,4 @@ else:
 type
   UnitCmdFunc* = proc (unit: ptr Unit; args: ptr msg_iter)
   PlugInCmdFunc* = proc (inWorld: ptr World; inUserData: pointer; args: ptr msg_iter;
-                      replyAddr: pointer)
+                      replyAddr: pointer) {.cdecl.}
