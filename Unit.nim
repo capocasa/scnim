@@ -10,7 +10,7 @@ type
   Graph* = object
   Wire* = object
   Rate* = object
-  UnitCtorFunc* = proc () {.cdecl.}
+  UnitCtorFunc* = proc (inUnit: ptr Unit) {.cdecl.}
   UnitDtorFunc* = proc (inUnit: ptr Unit) {.cdecl.}
   UnitCalcFunc* = proc (inThing: ptr Unit; inNumSamples: cint) {.cdecl}
   Unit_Extensions* {.bycopy.} = object
