@@ -10,70 +10,70 @@ import
 type
   scfft = object
   
-  AsyncStageFn* = proc (inWorld: ptr World; cmdData: pointer): bool
-  AsyncFreeFn* = proc (inWorld: ptr World; cmdData: pointer)
+  AsyncStageFn* = proc (inWorld: ptr World; cmdData: pointer): bool {.cdecl.}
+  AsyncFreeFn* = proc (inWorld: ptr World; cmdData: pointer) {.cdecl.}
 
 include
   ScopeBuffer
 
 type
-  InterfaceTable* {.bycopy.} = object
+  InterfaceTable* {.bycopy} = object
     mSineSize*: cuint
     mSineWavetable*: ptr Types.float32
     mSine*: ptr Types.float32
     mCosecant*: ptr Types.float32
     fPrint*: proc (fmt: cstring): cint {.cdecl,varargs.}
     fRanSeed*: proc (): int32 {.cdecl.}
-    fDefineUnit*: proc (inUnitClassName: cstring; inAllocSize: csize;
+    fDefineUnit*: proc (inUnitClassName: cstring; inAllocSize: csize; 
                       inCtor: UnitCtorFunc; inDtor: UnitDtorFunc; inFlags: uint32): bool {.cdecl.}
-    fDefinePlugInCmd*: proc (inCmdName: cstring; inFunc: PlugInCmdFunc;
+    fDefinePlugInCmd*: proc (inCmdName: cstring; inFunc: PlugInCmdFunc; 
                            inUserData: pointer): bool {.cdecl.}
-    fDefineUnitCmd*: proc (inUnitClassName: cstring; inCmdName: cstring;
+    fDefineUnitCmd*: proc (inUnitClassName: cstring; inCmdName: cstring; 
                          inFunc: UnitCmdFunc): bool {.cdecl.}
-    fDefineBufGen*: proc (inName: cstring; inFunc: BufGenFunc): bool {.cdecl.}
-    fClearUnitOutputs*: proc (inUnit: ptr Unit; inNumSamples: cint)
-    fNRTAlloc*: proc (inSize: csize): pointer
-    fNRTRealloc*: proc (inPtr: pointer; inSize: csize): pointer
-    fNRTFree*: proc (inPtr: pointer)
-    fRTAlloc*: proc (inWorld: ptr World; inSize: csize): pointer
-    fRTRealloc*: proc (inWorld: ptr World; inPtr: pointer; inSize: csize): pointer
-    fRTFree*: proc (inWorld: ptr World; inPtr: pointer)
-    fNodeRun*: proc (node: ptr Node; run: cint)
-    fNodeEnd*: proc (graph: ptr Node)
-    fSendTrigger*: proc (inNode: ptr Node; triggerID: cint; value: cfloat)
-    fSendNodeReply*: proc (inNode: ptr Node; replyID: cint; cmdName: cstring;
-                         numArgs: cint; values: ptr cfloat)
-    fSendMsgFromRT*: proc (inWorld: ptr World; inMsg: FifoMsg): bool
-    fSendMsgToRT*: proc (inWorld: ptr World; inMsg: FifoMsg): bool
-    fSndFileFormatInfoFromStrings*: proc (info: ptr SF_INFO;
+    fDefineBufGen*: proc (inName: cstring; inFunc: BufGenFunc): bool {.cdecl.} 
+    fClearUnitOutputs*: proc (inUnit: ptr Unit; inNumSamples: cint) {.cdecl.}
+    fNRTAlloc*: proc (inSize: csize): pointer {.cdecl.}
+    fNRTRealloc*: proc (inPtr: pointer; inSize: csize): pointer {.cdecl.}
+    fNRTFree*: proc (inPtr: pointer) {.cdecl.}
+    fRTAlloc*: proc (inWorld: ptr World; inSize: csize): pointer {.cdecl.}
+    fRTRealloc*: proc (inWorld: ptr World; inPtr: pointer; inSize: csize): pointer {.cdecl.}
+    fRTFree*: proc (inWorld: ptr World; inPtr: pointer) {.cdecl.}
+    fNodeRun*: proc (node: ptr Node; run: cint) {.cdecl.}
+    fNodeEnd*: proc (graph: ptr Node) {.cdecl.}
+    fSendTrigger*: proc (inNode: ptr Node; triggerID: cint; value: cfloat) {.cdecl.}
+    fSendNodeReply*: proc (inNode: ptr Node; replyID: cint; cmdName: cstring; 
+                         numArgs: cint; values: ptr cfloat) {.cdecl.} 
+    fSendMsgFromRT*: proc (inWorld: ptr World; inMsg: FifoMsg): bool {.cdecl.}
+    fSendMsgToRT*: proc (inWorld: ptr World; inMsg: FifoMsg): bool {.cdecl.}
+    fSndFileFormatInfoFromStrings*: proc (info: ptr SF_INFO; 
                                         headerFormatString: cstring;
-                                        sampleFormatString: cstring): cint
-    fGetNode*: proc (inWorld: ptr World; inID: cint): ptr Node
-    fGetGraph*: proc (inWorld: ptr World; inID: cint): ptr Graph
-    fNRTLock*: proc (inWorld: ptr World)
-    fNRTUnlock*: proc (inWorld: ptr World)
+                                        sampleFormatString: cstring): cint  {.cdecl.}
+    fGetNode*: proc (inWorld: ptr World; inID: cint): ptr Node {.cdecl.}
+    fGetGraph*: proc (inWorld: ptr World; inID: cint): ptr Graph {.cdecl.}
+    fNRTLock*: proc (inWorld: ptr World) {.cdecl.}
+    fNRTUnlock*: proc (inWorld: ptr World) {.cdecl.}
     mUnused0*: bool
-    fGroup_DeleteAll*: proc (group: ptr Group)
-    fDoneAction*: proc (doneAction: cint; unit: ptr Unit)
-    fDoAsynchronousCommand*: proc (inWorld: ptr World; replyAddr: pointer;
+    fGroup_DeleteAll*: proc (group: ptr Group) {.cdecl.}
+    fDoneAction*: proc (doneAction: cint; unit: ptr Unit) {.cdecl.}
+    fDoAsynchronousCommand*: proc (inWorld: ptr World; replyAddr: pointer; 
                                  cmdName: cstring; cmdData: pointer;
                                  stage2: AsyncStageFn; stage3: AsyncStageFn;
                                  stage4: AsyncStageFn; cleanup: AsyncFreeFn;
                                  completionMsgSize: cint;
-                                 completionMsgData: pointer): cint
-    fBufAlloc*: proc (inBuf: ptr SndBuf; inChannels: cint; inFrames: cint;
-                    inSampleRate: cdouble): cint
+                                 completionMsgData: pointer): cint {.cdecl.}
+    fBufAlloc*: proc (inBuf: ptr SndBuf; inChannels: cint; inFrames: cint; 
+                    inSampleRate: cdouble): cint {.cdecl.}
     fSCfftCreate*: proc (fullsize: csize; winsize: csize;
                        wintype: SCFFT_WindowFunction; indata: ptr cfloat;
                        outdata: ptr cfloat; forward: SCFFT_Direction;
-                       alloc: SCFFT_Allocator): ptr scfft
-    fSCfftDoFFT*: proc (f: ptr scfft)
-    fSCfftDoIFFT*: proc (f: ptr scfft)
-    fSCfftDestroy*: proc (f: ptr scfft; alloc: SCFFT_Allocator)
-    fGetScopeBuffer*: proc (inWorld: ptr World; index: cint; channels: cint;
-                          maxFrames: cint; a6: ScopeBufferHnd): bool
-    fPushScopeBuffer*: proc (inWorld: ptr World; a3: ScopeBufferHnd; frames: cint)
-    fReleaseScopeBuffer*: proc (inWorld: ptr World; a3: ScopeBufferHnd)
+                       alloc: SCFFT_Allocator): ptr scfft {.cdecl.} 
+    fSCfftDoFFT*: proc (f: ptr scfft) {.cdecl.}
+    fSCfftDoIFFT*: proc (f: ptr scfft) {.cdecl.}
+    fSCfftDestroy*: proc (f: ptr scfft; alloc: SCFFT_Allocator) {.cdecl.}
+    fGetScopeBuffer*: proc (inWorld: ptr World; index: cint; channels: cint; 
+                          maxFrames: cint; a6: ScopeBufferHnd): bool {.cdecl.}
+    fPushScopeBuffer*: proc (inWorld: ptr World; a3: ScopeBufferHnd; frames: cint) {.cdecl.}
+    fReleaseScopeBuffer*: proc (inWorld: ptr World; a3: ScopeBufferHnd) {.cdecl.}
 
 #[
 const
