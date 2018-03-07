@@ -46,6 +46,8 @@ var mRate*: ptr Rate
 const
   kUnitDef_CantAliasInputsToOutputs* = 1
 
+#when defined(_WIN32):
+
 template IN*(index: untyped): untyped =
   (unit.mInBuf[index])
 
@@ -86,8 +88,8 @@ const
 when defined(SUPERNOVA):
   type
     buffer_lock2* {.bycopy.}[shared1: static[bool]; shared2: static[bool]] = object
-      buf1*: ptr SndBuf
-      buf2*: ptr SndBuf
+      buf1U*: ptr SndBuf
+      buf2U*: ptr SndBuf
 
   proc constructbuffer_lock2*[shared1: static[bool]; shared2: static[bool]](
       buf1: ptr SndBuf; buf2: ptr SndBuf): buffer_lock2[shared1, shared2] {.constructor.} =
@@ -102,39 +104,39 @@ when defined(SUPERNOVA):
   proc destroybuffer_lock2*[shared1: static[bool]; shared2: static[bool]](
       this: var buffer_lock2[shared1, shared2]) {.destructor.} =
     unlock1()
-    if buf1 != buf2: unlock2()
+    if buf1U != buf2U: unlock2()
   
   proc lock1*[shared1: static[bool]; shared2: static[bool]](
       this: var buffer_lock2[shared1, shared2]) =
-    if buf1.isLocal: return
+    if buf1U.isLocal: return
 
-    if not shared1: buf1.lock.lock()
-    else: buf1.lock.lock_shared()
+    if not shared1: buf1U.lock.lock()
+    else: buf1U.lock.lock_shared()
   
   proc lock2*[shared1: static[bool]; shared2: static[bool]](
       this: var buffer_lock2[shared1, shared2]): bool =
-    if buf2.isLocal: return true
+    if buf2U.isLocal: return true
 
-    if not shared2: return buf2.lock.try_lock()
-    else: return buf2.lock.try_lock_shared()
+    if not shared2: return buf2U.lock.try_lock()
+    else: return buf2U.lock.try_lock_shared()
   
   proc unlock1*[shared1: static[bool]; shared2: static[bool]](
       this: var buffer_lock2[shared1, shared2]) =
-    if buf1.isLocal: return
+    if buf1U.isLocal: return
 
-    if not shared1: buf1.lock.unlock()
-    else: buf1.lock.unlock_shared()
+    if not shared1: buf1U.lock.unlock()
+    else: buf1U.lock.unlock_shared()
   
   proc unlock2*[shared1: static[bool]; shared2: static[bool]](
       this: var buffer_lock2[shared1, shared2]) =
-    if buf2.isLocal: return
+    if buf2U.isLocal: return
 
-    if not shared2: buf2.lock.unlock()
-    else: buf2.lock.unlock_shared()
+    if not shared2: buf2U.lock.unlock()
+    else: buf2U.lock.unlock_shared()
   
   type
     buffer_lock* {.bycopy.}[shared: static[bool]] = object
-      buf*: ptr SndBuf
+      bufU*: ptr SndBuf
 
   proc constructbuffer_lock*[shared: static[bool]](buf: ptr SndBuf): buffer_lock[
       shared] {.constructor.} =
@@ -144,9 +146,9 @@ when defined(SUPERNOVA):
   
   proc destroybuffer_lock*[shared: static[bool]](this: var buffer_lock[shared]) {.
       destructor.} =
-    if not buf.isLocal:
-      if shared: buf.lock.unlock_shared()
-      else: buf.lock.unlock()
+    if not bufU.isLocal:
+      if shared: bufU.lock.unlock_shared()
+      else: bufU.lock.unlock()
   
   template ACQUIRE_BUS_AUDIO*(index: untyped): untyped =
     unit.mWorld.mAudioBusLocks[index].lock()
