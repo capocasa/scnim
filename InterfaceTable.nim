@@ -22,15 +22,15 @@ type
     mSineWavetable*: ptr Types.float32
     mSine*: ptr Types.float32
     mCosecant*: ptr Types.float32
-    fPrint*: proc (fmt: cstring): cint {.varargs.}
-    fRanSeed*: proc (): int32
+    fPrint*: proc (fmt: cstring): cint {.cdecl,varargs.}
+    fRanSeed*: proc (): int32 {.cdecl.}
     fDefineUnit*: proc (inUnitClassName: cstring; inAllocSize: csize;
-                      inCtor: UnitCtorFunc; inDtor: UnitDtorFunc; inFlags: uint32): bool
+                      inCtor: UnitCtorFunc; inDtor: UnitDtorFunc; inFlags: uint32): bool {.cdecl.}
     fDefinePlugInCmd*: proc (inCmdName: cstring; inFunc: PlugInCmdFunc;
-                           inUserData: pointer): bool
+                           inUserData: pointer): bool {.cdecl.}
     fDefineUnitCmd*: proc (inUnitClassName: cstring; inCmdName: cstring;
-                         inFunc: UnitCmdFunc): bool
-    fDefineBufGen*: proc (inName: cstring; inFunc: BufGenFunc): bool
+                         inFunc: UnitCmdFunc): bool {.cdecl.}
+    fDefineBufGen*: proc (inName: cstring; inFunc: BufGenFunc): bool {.cdecl.}
     fClearUnitOutputs*: proc (inUnit: ptr Unit; inNumSamples: cint)
     fNRTAlloc*: proc (inSize: csize): pointer
     fNRTRealloc*: proc (inPtr: pointer; inSize: csize): pointer
