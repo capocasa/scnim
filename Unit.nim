@@ -17,16 +17,22 @@ type
     todo*: ptr cfloat
 
   Unit* {.bycopy.} = object
+    mWorld*: ptr World
+    mUnitDef*: ptr UnitDef
+    mParent*: ptr Graph
     mNumInputs*: uint32
     mNumOutputs*: uint32
     mCalcRate*: int16
     mSpecialIndex*: int16
     mParentIndex*: int16
     mDone*: int16
+    mInput: ptr ptr Wire
+    mOutput: ptr ptr Wire
+    mRate: ptr Rate
     mExtensions*: ptr Unit_Extensions
     mInBuf*: ptr ptr cfloat
     mOutBuf*: ptr ptr cfloat
-    mCalcFunc*: UnitCalcFunc
+    mCalcFunc*: proc (inThing: ptr Unit; inNumSamples: cint) {.cdecl.}
     mBufLength*: cint
 
 
@@ -239,6 +245,6 @@ else:
 
 
 type
-  UnitCmdFunc* = proc (unit: ptr Unit; args: ptr msg_iter)
+  UnitCmdFunc* = proc (unit: ptr Unit; args: ptr msg_iter) {.cdecl.}
   PlugInCmdFunc* = proc (inWorld: ptr World; inUserData: pointer; args: ptr msg_iter;
                       replyAddr: pointer) {.cdecl.}
