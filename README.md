@@ -82,6 +82,7 @@ Most SuperCollider plugin headers were already automatically translated to nim, 
 - Plugin commands
 - Async commands
 - Generator commands
+- Supernova support
 
 Nim does automatic dead code elimination if you add the `--deadCodeElim=on` switch to the compile command above. Still, when the features are implemented, some code cleanup and possibly optimization should be performed before declaring this stable.
 
