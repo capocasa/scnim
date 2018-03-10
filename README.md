@@ -68,7 +68,9 @@ Status
 
 The code works and it's fast, so the proof of concept was a success!
 
-The basics are present, so it can already be used to develop simple UGens by copying the example directory- but most more involved features are still missing though.
+The basics are present, so it can already be used to develop simple UGens by copying the example directory- but most more involved UGen features are still missing though.
+
+Most of all, Nim-Code is usually considered "safe", which means that if your program compiles, it won't crash. This isn't the case yet for scnim- Nim is really good at creating language features, so it should be quite possible to hide away all the gritty details behind a very clean interface without sacrificing performance- but we haven't figured out yet how to do that.
 
 Development
 -----------
