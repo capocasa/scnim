@@ -10,7 +10,10 @@ proc server_type(): ServerType {.cdecl,exportc,dynlib.}=
 
 var ft: ptr InterfaceTable
 
-proc next(unit: ptr Unit, numSamples: cint) {.cdecl,exportc,dynlib.} =
+type
+  Example = object of Unit
+
+proc next(unit: ptr Example, numSamples: cint) {.cdecl,exportc,dynlib.} =
   var
     input = unit.mInBuf[]
     output = unit.mOutBuf[]
@@ -18,10 +21,10 @@ proc next(unit: ptr Unit, numSamples: cint) {.cdecl,exportc,dynlib.} =
   for i in 0..numSamples:
     output[i] = input[i]
 
-proc ctor (unit: ptr Unit) {.cdecl,exportc,dynlib.} =
-  unit.mCalcFunc = next
+proc ctor(unit: ptr Example) {.cdecl,exportc,dynlib.} =
+  unit.mCalcFunc = cast[UnitCalcFunc](next)
 
 proc load(inTable: ptr InterfaceTable) {.cdecl,exportc,dynlib.} =
   ft = inTable;
-  discard ft.fDefineUnit("Example", sizeof(Unit.Unit), ctor, nil, 0'u32)
+  discard ft.fDefineUnit("Example", sizeof(Example), cast[UnitCtorFunc](ctor), nil, 0'u32)
 

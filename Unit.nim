@@ -16,7 +16,7 @@ type
   Unit_Extensions* {.bycopy.} = object
     todo*: ptr cfloat
 
-  Unit* {.bycopy.} = object
+  Unit* {.bycopy,inheritable,pure.} = object
     mWorld*: ptr World
     mUnitDef*: ptr UnitDef
     mParent*: ptr Graph
