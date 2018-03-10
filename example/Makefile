@@ -1,5 +1,5 @@
 
-scnim_src=/usr/src/scnim
+scnim?=/usr/src/scnim
 name=Example
 
 all: main 
