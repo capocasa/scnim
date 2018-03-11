@@ -7,7 +7,7 @@ Introduction
 
 *Nim* is an exciting new programming language. It is about as easy to work with as ruby, but it compiles to very efficient C code.
 
-It also uses itself as a pre-processor, so you can generate huge blobs of efficient code without having to a lot of copying and pasting by hand.
+It also uses itself as a pre-processor, so you can generate huge blobs of efficient code without having to do a lot of copying and pasting by hand.
 
 This seems to make it ideally suitable for writing realtime signal processing code, and, by extension, SuperCollider plugins.
 
@@ -61,6 +61,8 @@ Realtime considerations
 The same considerations apply when developing realtime code with Nim as with C++. Don't use features that allocate their own memory, prefer primitive types, keep it simple.
 
 Nim normally uses a garbage collector, a system to automatically frees up that kind of memory. For UGen development, it is turned off using the `-gc=none` switch above. As a neat side effect, the compiler will warn you about using "garbage collected memory", so if you're not sure which feature you can use, you can just try it and see if you get any warnings.
+
+Theoretically, Nim SuperCollider plugins should be just as fast as C code, and occasionally faster when delivering optimizations. From looking at the generated code, I can say this is most likely true.
 
 Status
 ------
