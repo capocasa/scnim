@@ -1,7 +1,6 @@
 
-import
-  PlugIn,InterfaceTable,Unit,ptrmath
-  
+import scnim
+
 proc api_version(): int {.cdecl,exportc,dynlib.} =
   return sc_api_version;
 

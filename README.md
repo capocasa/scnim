@@ -19,8 +19,7 @@ How to use it
 This is what a simple SuperCollider plugin looks like written with scnim.
 
     # ExampleUGens.nim
-    import
-      PlugIn,InterfaceTable,Unit,ptrmath
+    import scnim
       
     proc api_version(): int {.cdecl,exportc,dynlib.} =
       return sc_api_version;
