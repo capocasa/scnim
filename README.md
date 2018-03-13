@@ -16,6 +16,10 @@ This is a proof of concept that shows to see how well it holds up in practice- a
 How to use it
 -------------
 
+Installation
+
+    nimble install scnim
+
 This is what a simple SuperCollider plugin looks like written with scnim.
 
     # ExampleUGens.nim
@@ -49,7 +53,7 @@ This is what a simple SuperCollider plugin looks like written with scnim.
 
 This gets compiled into an intermediate C++ file that links up with SuperCollider like a normal UGen does, using the following command:
 
-	  nim --path=/path/to/scnim --gc=none --app=lib --out=ExampleUGens.so cpp ExampleUGens.nim
+	  nim --gc=none --app=lib --out=ExampleUGens.so cpp ExampleUGens.nim
 
 The example can also be found in the `examples` directory- see `examples/README.md` to compile and use the example on SuperCollier.
 
