@@ -15,11 +15,11 @@ Build
 
 - Install scnim
 
-    git clone https://github.com/carlocapocasa/scnim /path/to/scnim
+    nimble install scnim
 
 *Build*
 
-    make scnim=/path/to/scnim
+    nim build ExampleUGens.nim
 
 *Install*
 
